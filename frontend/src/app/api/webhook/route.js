@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import LembuPutihTicket from '@/utils/LembuPutihTicket.json';
 
 // --- MASUKKAN CONTRACT ADDRESS TERBARU ANDA DI SINI ---
-const CONTRACT_ADDRESS = "0xb408739E4b1fFEAfF2DE0c9D2669ac530bc46dcb"; 
+const CONTRACT_ADDRESS = "0xb38CB924714C2B3654697027C31b0471fBd83553"; 
 
 export async function POST(request) {
     try {
