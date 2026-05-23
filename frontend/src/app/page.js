@@ -201,19 +201,63 @@ export default function Home() {
   };
 
   // --- FUNGSI LOGIN / CONNECT ---
+  // const connectWallet = async () => {
+  //   if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
+  //   try {
+  //       const provider = new ethers.BrowserProvider(window.ethereum);
+  //       const signer = await provider.getSigner();
+  //       const address = await signer.getAddress();
+        
+  //       setAccount(address);
+  //       checkOwnership(address, provider);
+  //       // Tetap tarik data terbaru saat login
+  //       fetchMarketStatus();
+  //   } catch (error) {
+  //       console.error("User rejected connection", error);
+  //   }
+  // };
   const connectWallet = async () => {
     if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
     try {
+        // --- BEST PRACTICE: Force Switch to Sepolia Network ---
+        const sepoliaChainId = '0xaa36a7'; // Chain ID Sepolia dalam bentuk Hexadecimal
+        
+        const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (currentChainId !== sepoliaChainId) {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: sepoliaChainId }],
+                });
+            } catch (switchError) {
+                // Jika pengunjung belum pernah menambahkan Sepolia, otomatis tambahkan
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: sepoliaChainId,
+                            chainName: 'Sepolia test network',
+                            nativeCurrency: { name: 'SepoliaETH', symbol: 'SEP', decimals: 18 },
+                            rpcUrls: ['https://sepolia.infura.io/v3/'],
+                            blockExplorerUrls: ['https://sepolia.etherscan.io']
+                        }],
+                    });
+                } else {
+                    throw switchError;
+                }
+            }
+        }
+
+        // Lanjut ke proses login normal
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
         
         setAccount(address);
         checkOwnership(address, provider);
-        // Tetap tarik data terbaru saat login
         fetchMarketStatus();
     } catch (error) {
-        console.error("User rejected connection", error);
+        console.error("User rejected connection or switch network", error);
     }
   };
 
