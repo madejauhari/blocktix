@@ -6,7 +6,7 @@ import Link from 'next/link';
 import LembuPutihTicket from '@/utils/LembuPutihTicket.json';
 
 // --- KONFIGURASI ---
-const CONTRACT_ADDRESS = "0xb408739E4b1fFEAfF2DE0c9D2669ac530bc46dcb"; 
+const CONTRACT_ADDRESS = "0x7495cAD923061e57481e764E70F80B9F3Ff2BFe0"; 
 
 export default function Home() {
   // --- STATE LOGIC ---
