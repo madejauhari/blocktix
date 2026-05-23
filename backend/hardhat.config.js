@@ -6,7 +6,8 @@ module.exports = {
   networks: {
     // Settingan untuk Localhost (Laptop)
     localhost: {
-      url: "http://127.0.0.1:8545",
+      // url: "http://127.0.0.1:8545",
+      url: "https://blocktix-kappa.vercel.app/",
     },
     // Settingan untuk Internet (Sepolia)
     sepolia: {
