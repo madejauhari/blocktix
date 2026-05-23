@@ -6,7 +6,7 @@ import Link from 'next/link';
 import LembuPutihTicket from '@/utils/LembuPutihTicket.json';
 
 // --- KONFIGURASI ---
-const CONTRACT_ADDRESS = "0xb38CB924714C2B3654697027C31b0471fBd83553"; 
+const CONTRACT_ADDRESS = "0xb408739E4b1fFEAfF2DE0c9D2669ac530bc46dcb"; 
 
 export default function Home() {
   // --- STATE LOGIC ---
@@ -128,9 +128,9 @@ export default function Home() {
     fetchMarketStatus();
     fetchEthRate(); 
 
-    // --- [BARU] INJECT MIDTRANS SNAP SCRIPT ---
+    // --- [BARU] INJECT MIDTRANS SNAP SCRIPT (Ubah ke .sandbox jika testing, hapus .sandbox jika production) ---
     const script = document.createElement("script");
-    script.src = "https://app.midtrans.com/snap/snap.js";
+    script.src = "https://app.midtrans.com/snap/snap.js"; 
     script.setAttribute("data-client-key", process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
     script.async = true;
     document.body.appendChild(script);
@@ -149,22 +149,25 @@ export default function Home() {
     };
   }, []);
 
+  // --- [UPDATE KRUSIAL]: MEMBACA DATA DARI PUBLIC RPC ---
   const fetchMarketStatus = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, LembuPutihTicket.abi, provider);
-      try {
-        const price = await contract.ticketPrice();
-        const active = await contract.isSaleActive();
-        const max = await contract.maxSupply();
-        const sold = await contract.totalMinted();
-        
-        setDynamicPrice(ethers.formatEther(price));
-        setIsSaleOn(active);
-        setMaxSupply(Number(max));
-        setTotalMinted(Number(sold));
-        if (Number(sold) >= Number(max)) setSoldOut(true);
-      } catch (err) { console.error(err); }
+    try {
+      // Gunakan Public Node agar sistem tidak bergantung pada MetaMask pengunjung
+      const publicProvider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, LembuPutihTicket.abi, publicProvider);
+      
+      const price = await contract.ticketPrice();
+      const active = await contract.isSaleActive();
+      const max = await contract.maxSupply();
+      const sold = await contract.totalMinted();
+      
+      setDynamicPrice(ethers.formatEther(price));
+      setIsSaleOn(active);
+      setMaxSupply(Number(max));
+      setTotalMinted(Number(sold));
+      if (Number(sold) >= Number(max)) setSoldOut(true);
+    } catch (err) { 
+      console.error("Gagal menarik data blockchain via Public RPC:", err); 
     }
   };
 
@@ -207,6 +210,7 @@ export default function Home() {
         
         setAccount(address);
         checkOwnership(address, provider);
+        // Tetap tarik data terbaru saat login
         fetchMarketStatus();
     } catch (error) {
         console.error("User rejected connection", error);
@@ -568,7 +572,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 
-                                {/* --- [BARU] DUAL PAYMENT BUTTONS --- */}
+                                {/* --- DUAL PAYMENT BUTTONS --- */}
                                 <div className="flex gap-3">
                                     <button 
                                         onClick={buyTicket} 
