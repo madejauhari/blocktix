@@ -128,7 +128,7 @@ export default function Home() {
     fetchMarketStatus();
     fetchEthRate(); 
 
-    // --- [BARU] INJECT MIDTRANS SNAP SCRIPT (Ubah ke .sandbox jika testing, hapus .sandbox jika production) ---
+    // --- [BARU] INJECT MIDTRANS SNAP SCRIPT ---
     const script = document.createElement("script");
     script.src = "https://app.midtrans.com/snap/snap.js"; 
     script.setAttribute("data-client-key", process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
@@ -149,10 +149,9 @@ export default function Home() {
     };
   }, []);
 
-  // --- [UPDATE KRUSIAL]: MEMBACA DATA DARI PUBLIC RPC ---
+  // --- MEMBACA DATA DARI PUBLIC RPC ---
   const fetchMarketStatus = async () => {
     try {
-      // Gunakan Public Node agar sistem tidak bergantung pada MetaMask pengunjung
       const publicProvider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
       const contract = new ethers.Contract(CONTRACT_ADDRESS, LembuPutihTicket.abi, publicProvider);
       
@@ -200,27 +199,11 @@ export default function Home() {
     } catch (err) { console.error(err); }
   };
 
-  // --- FUNGSI LOGIN / CONNECT ---
-  // const connectWallet = async () => {
-  //   if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
-  //   try {
-  //       const provider = new ethers.BrowserProvider(window.ethereum);
-  //       const signer = await provider.getSigner();
-  //       const address = await signer.getAddress();
-        
-  //       setAccount(address);
-  //       checkOwnership(address, provider);
-  //       // Tetap tarik data terbaru saat login
-  //       fetchMarketStatus();
-  //   } catch (error) {
-  //       console.error("User rejected connection", error);
-  //   }
-  // };
   const connectWallet = async () => {
     if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
     try {
         // --- BEST PRACTICE: Force Switch to Sepolia Network ---
-        const sepoliaChainId = '0xaa36a7'; // Chain ID Sepolia dalam bentuk Hexadecimal
+        const sepoliaChainId = '0xaa36a7'; 
         
         const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (currentChainId !== sepoliaChainId) {
@@ -230,7 +213,6 @@ export default function Home() {
                     params: [{ chainId: sepoliaChainId }],
                 });
             } catch (switchError) {
-                // Jika pengunjung belum pernah menambahkan Sepolia, otomatis tambahkan
                 if (switchError.code === 4902) {
                     await window.ethereum.request({
                         method: 'wallet_addEthereumChain',
@@ -248,7 +230,6 @@ export default function Home() {
             }
         }
 
-        // Lanjut ke proses login normal
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
@@ -271,7 +252,7 @@ export default function Home() {
     alert("Logged out from Dashboard.");
   };
 
-  // --- OPSI 1: PEMBAYARAN MURNI WEB3 (ETH) ---
+  // --- OPSI 1: PEMBAYARAN MURNI WEB3 (ETH) DENGAN CUSTOM ERROR HANDLING ---
   const buyTicket = async () => {
     if (!account) return alert("Please connect wallet first!");
     if (!visitorName || !visitDate) return alert("Please fill in Name and Visit Date!");
@@ -298,7 +279,16 @@ export default function Home() {
       fetchMarketStatus(); 
     } catch (err) {
       console.error(err);
-      setStatus("Failed: " + (err.reason || err.message));
+      
+      // Deteksi khusus untuk error saldo kurang
+      const errorStr = err.message ? err.message.toLowerCase() : "";
+      if (err.code === "INSUFFICIENT_FUNDS" || errorStr.includes("insufficient funds")) {
+          alert("⚠️ TRANSAKSI DITOLAK: Saldo Sepolia ETH Tidak Mencukupi.\n\nJika Anda yakin saldo terisi, hal ini terjadi karena dompet belum tersinkronisasi.\n\nSOLUSI: Silakan klik icon roda gigi/titik tiga pada MetaMask Anda, lakukan 'Clear Activity' / 'Reset Account', lalu coba reconnect kembali.");
+          setStatus("Failed: Saldo ETH tidak mencukupi untuk biaya transaksi.");
+      } else {
+          // Tangkap error lainnya secara rapi
+          setStatus("Failed: " + (err.reason || "Transaksi dibatalkan atau gagal diproses."));
+      }
     }
     setLoading(false);
   };
@@ -372,27 +362,28 @@ export default function Home() {
       
       {/* 1. NAVBAR */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
             
             <Link 
                 href="/" 
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
                 <div className="flex flex-col">
-                    <h1 className={`text-2xl font-bold tracking-tighter cursor-pointer ${isScrolled ? 'text-green-900' : 'text-white'}`}>
+                    <h1 className={`text-xl md:text-2xl font-bold tracking-tighter cursor-pointer ${isScrolled ? 'text-green-900' : 'text-white'}`}>
                         BlockTix System
                     </h1>
-                    <span className={`text-[10px] tracking-widest uppercase ${isScrolled ? 'text-gray-500' : 'text-green-200'}`}>
+                    <span className={`text-[8px] md:text-[10px] tracking-widest uppercase ${isScrolled ? 'text-gray-500' : 'text-green-200'}`}>
                         Simulation Mode: Lembu Putih
                     </span>
                 </div>
             </Link>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
                 {!account ? (
+                    // PERUBAHAN UI: Class responsive ditambahkan di sini (px-4 py-1.5 text-sm untuk mobile)
                     <button 
                         onClick={connectWallet} 
-                        className="px-6 py-2 rounded-full font-semibold transition-all shadow-lg bg-green-600 hover:bg-green-700 text-white"
+                        className="px-4 py-1.5 text-sm md:px-6 md:py-2 md:text-base rounded-full font-semibold transition-all shadow-lg bg-green-600 hover:bg-green-700 text-white"
                     >
                         Connect Wallet
                     </button>
@@ -403,7 +394,7 @@ export default function Home() {
                         </div>
                         <button 
                             onClick={disconnectWallet}
-                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold shadow-lg transition-all text-sm flex items-center gap-1"
+                            className="px-3 py-1.5 md:px-4 md:py-2 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold shadow-lg transition-all text-sm flex items-center gap-1"
                         >
                             <span>🚪</span>
                         </button>
@@ -422,21 +413,21 @@ export default function Home() {
         ></div>
         <div className="absolute inset-0 bg-black/40 z-0"></div> 
 
-        <div className="relative z-10 text-white max-w-4xl space-y-6">
-            <p className="text-lg md:text-xl font-medium tracking-widest uppercase text-green-300">
+        <div className="relative z-10 text-white max-w-4xl space-y-6 mt-10">
+            <p className="text-base md:text-xl font-medium tracking-widest uppercase text-green-300">
                 Decentralized E-Ticketing
             </p>
-            <h1 className="text-5xl md:text-7xl font-bold font-serif leading-tight">
+            <h1 className="text-4xl md:text-7xl font-bold font-serif leading-tight">
                 Secure & Transparent <br/> Travel Experience
             </h1>
-            <p className="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto">
+            <p className="text-gray-200 text-base md:text-xl max-w-2xl mx-auto px-4">
                 Prototype Demonstration using Case Study: <strong>Lembu Putih, Gianyar</strong>.
                 Powered by Ethereum Smart Contract & NFT Standard.
             </p>
             <div className="pt-8">
                 <button 
                     onClick={scrollToBooking}
-                    className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
+                    className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
                 >
                     Buy Tickets <span className="text-xl">→</span>
                 </button>
@@ -477,7 +468,7 @@ export default function Home() {
 
       {/* 4. BOOKING FORM */}
       <section ref={bookingSectionRef} className="py-24 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
             <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Mint Your NFT Ticket</h2>
                 <p className="text-gray-500">Connect wallet, select date, and secure your spot on the Blockchain.</p>
@@ -550,7 +541,7 @@ export default function Home() {
                         </div>
                     )}
 
-                    <div className={`bg-white p-8 rounded-2xl shadow-xl border border-gray-100 ${!account ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <div className={`bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 ${!account ? 'opacity-50 pointer-events-none' : ''}`}>
                         <h3 className="font-bold text-xl mb-6">Booking Details</h3>
                         
                         <div className="space-y-5">
@@ -606,7 +597,7 @@ export default function Home() {
                                     
                                     <div className="text-right">
                                         {/* Harga Asli ETH */}
-                                        <span className="text-3xl font-bold text-green-700 block">
+                                        <span className="text-2xl md:text-3xl font-bold text-green-700 block">
                                             {(parseFloat(dynamicPrice) * buyQuantity).toFixed(4)} ETH
                                         </span>
                                         {/* Hasil Konversi ke Rupiah */}
@@ -617,26 +608,26 @@ export default function Home() {
                                 </div>
                                 
                                 {/* --- DUAL PAYMENT BUTTONS --- */}
-                                <div className="flex gap-3">
+                                <div className="flex gap-2 md:gap-3">
                                     <button 
                                         onClick={buyTicket} 
                                         disabled={loading || soldOut || !isSaleOn || !!dateError} 
-                                        className="w-1/2 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
+                                        className="w-1/2 py-2 md:py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
                                     >
-                                        <span>Pay with ETH</span>
-                                        <span className="text-[10px] font-normal text-gray-300">(MetaMask)</span>
+                                        <span className="text-sm md:text-base">Pay with ETH</span>
+                                        <span className="text-[8px] md:text-[10px] font-normal text-gray-300">(MetaMask)</span>
                                     </button>
                                     <button 
                                         onClick={buyWithRupiah} 
                                         disabled={loading || soldOut || !isSaleOn || !!dateError || !ethRateIDR} 
-                                        className="w-1/2 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
+                                        className="w-1/2 py-2 md:py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
                                     >
-                                        <span>Pay with Rupiah</span>
-                                        <span className="text-[10px] font-normal text-blue-200">(QRIS/Transfer)</span>
+                                        <span className="text-sm md:text-base">Pay with Rupiah</span>
+                                        <span className="text-[8px] md:text-[10px] font-normal text-blue-200">(QRIS/Transfer)</span>
                                     </button>
                                 </div>
                                 
-                                {status && <p className="text-center text-sm mt-4 text-blue-600 font-medium bg-blue-50 py-2 rounded">{status}</p>}
+                                {status && <p className="text-center text-xs md:text-sm mt-4 text-blue-600 font-medium bg-blue-50 py-2 rounded">{status}</p>}
                             </div>
                             
                         </div>
