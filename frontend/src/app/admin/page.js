@@ -251,32 +251,32 @@ export default function AdminPage() {
 
         {/* POPUP ERROR */}
         {errorMsg && (
-            <div className="absolute top-10 z-50 animate-bounce">
-                <div className="bg-red-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 font-bold border-2 border-red-400">
+            <div className="absolute top-10 z-50 animate-bounce w-[90%] md:w-auto text-center">
+                <div className="bg-red-600 text-white px-4 md:px-6 py-3 rounded-full shadow-2xl inline-flex items-center justify-center gap-2 font-bold border-2 border-red-400 text-sm md:text-base">
                     <span>🚫</span> {errorMsg}
                 </div>
             </div>
         )}
 
-        <div className="relative z-10 bg-white/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/50">
-            <div className="bg-gray-900 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg">
-                <span className="text-4xl">🛠️</span>
+        {/* FIX UI: Ditambahkan margin horizontal (mx-4) agar presisi di HP */}
+        <div className="relative z-10 bg-white/90 backdrop-blur-xl p-8 md:p-10 mx-4 rounded-3xl shadow-2xl max-w-md w-[calc(100%-2rem)] md:w-full text-center border border-white/50">
+            <div className="bg-gray-900 w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg">
+                <span className="text-3xl md:text-4xl">🛠️</span>
             </div>
             
-            {/* [REVISI] Judul Sistem Umum */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">BlockTix Admin</h1>
-            <p className="text-gray-500 mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">BlockTix Admin</h1>
+            <p className="text-sm md:text-base text-gray-500 mb-8">
                 System Control Panel. Restricted access for Contract Owner only.
             </p>
 
             <button 
                 onClick={connectWallet}
-                className="w-full py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all transform hover:scale-105 shadow-lg flex justify-center items-center gap-2"
+                className="w-full py-3 md:py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all transform hover:scale-105 shadow-lg flex justify-center items-center gap-2 text-sm md:text-base"
             >
                 <span>🦊</span> Connect Admin Wallet
             </button>
 
-            <Link href="/" className="block mt-6 text-sm text-gray-500 hover:text-green-600 font-semibold">
+            <Link href="/" className="block mt-6 text-xs md:text-sm text-gray-500 hover:text-green-600 font-semibold">
                 ← Back to User Site
             </Link>
         </div>
@@ -286,82 +286,82 @@ export default function AdminPage() {
 
   // --- TAMPILAN DASHBOARD ---
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans pb-20">
+    // FIX UI: Tambahan `overflow-x-hidden` untuk memotong ruang kosong (black space) di HP
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans pb-20 overflow-x-hidden">
       
       {/* --- NAVBAR ADMIN --- */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
+            <div className="flex items-center gap-2 md:gap-3">
                 <div className="bg-gray-900 text-white p-2 rounded-lg shadow-lg">
-                    <span className="text-xl">🛠️</span>
+                    <span className="text-base md:text-xl">🛠️</span>
                 </div>
                 <div>
-                    {/* [REVISI] Judul Sistem Umum */}
-                    <h1 className="text-lg font-bold text-gray-900 leading-none">BlockTix Admin</h1>
-                    <p className="text-xs text-gray-500">System Control Panel</p>
+                    <h1 className="text-sm md:text-lg font-bold text-gray-900 leading-none">BlockTix Admin</h1>
+                    <p className="text-[10px] md:text-xs text-gray-500">System Control Panel</p>
                 </div>
             </div>
-            <div className="flex items-center gap-4">
-                 <Link href="/" className="text-sm font-medium text-gray-500 hover:text-green-600 transition">
+            <div className="flex items-center gap-2 md:gap-4">
+                 <Link href="/" className="hidden sm:block text-xs md:text-sm font-medium text-gray-500 hover:text-green-600 transition">
                     ← View Live Site
                  </Link>
-                 <div className="px-4 py-2 rounded-full text-xs font-bold border bg-green-50 text-green-700 border-green-200">
+                 <div className="px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-xs font-bold border bg-green-50 text-green-700 border-green-200 text-center">
                     ACCESS GRANTED
                  </div>
             </div>
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-6 mt-10">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
         
-        <div className="grid md:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
             
             {/* --- LEFT COLUMN: CONTROLS (8 Cols) --- */}
-            <div className="md:col-span-8 space-y-8">
+            <div className="lg:col-span-8 space-y-6 md:space-y-8">
                 
                 {/* 1. SALES CONFIGURATION */}
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                    <div className="flex justify-between items-start mb-6">
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900">Market Configuration</h2>
-                            <p className="text-sm text-gray-500">Manage ticket pricing and supply.</p>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Market Configuration</h2>
+                            <p className="text-xs md:text-sm text-gray-500">Manage ticket pricing and supply.</p>
                         </div>
-                        <div className={`px-3 py-1 rounded text-xs font-bold ${isSaleActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        <div className={`px-3 py-1 rounded text-[10px] md:text-xs font-bold whitespace-nowrap ${isSaleActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                             {isSaleActive ? "● MARKET OPEN" : "● MARKET CLOSED"}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 mb-6">
+                    {/* FIX UI: grid-cols-1 di HP agar ditumpuk, grid-cols-2 di Laptop */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6">
                         <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Price</label>
-                            <p className="text-2xl font-bold text-gray-900">{currentPrice} <span className="text-sm text-gray-500">ETH</span></p>
-                            {/* Tampilan Harga Rupiah Live */}
-                            <p className="text-sm font-semibold text-blue-600 mt-1">≈ {formatToIDR(currentPrice)}</p>
+                            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Current Price</label>
+                            <p className="text-xl md:text-2xl font-bold text-gray-900 break-words">{currentPrice} <span className="text-xs md:text-sm text-gray-500">ETH</span></p>
+                            <p className="text-xs md:text-sm font-semibold text-blue-600 mt-1">≈ {formatToIDR(currentPrice)}</p>
                             
                             <div className="mt-3 text-[10px] bg-yellow-50 text-yellow-700 p-2 rounded border border-yellow-200 leading-tight">
                                 ⚠ <strong>Testnet Mode:</strong> Using Native ETH.<br/>
-                                <em>Stablecoin (IDRT) logic is disabled for this simulation.</em>
+                                <em>Stablecoin logic disabled.</em>
                             </div>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Supply</label>
+                            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider">Total Supply</label>
                             <div className="flex items-baseline gap-2 mt-1">
-                                <p className="text-3xl font-bold text-gray-900">{currentQuota}</p>
-                                <p className="text-sm text-gray-500">({totalSold} Sold)</p>
+                                <p className="text-2xl md:text-3xl font-bold text-gray-900">{currentQuota}</p>
+                                <p className="text-xs md:text-sm text-gray-500">({totalSold} Sold)</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-4 pt-4 border-t border-gray-100">
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* FIX UI: Ditumpuk di HP (grid-cols-1) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <div className="flex justify-between items-end mb-1">
-                                    <label className="block text-sm font-semibold text-gray-700">Update Price ({isIdrMode ? 'IDR' : 'ETH'})</label>
+                                    <label className="block text-xs md:text-sm font-semibold text-gray-700">Update Price ({isIdrMode ? 'IDR' : 'ETH'})</label>
                                     
-                                    {/* TOMBOL SWITCH CURRENCY */}
                                     <button 
                                         onClick={() => { setIsIdrMode(!isIdrMode); setInputPrice(""); }}
-                                        className="text-xs font-bold px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-gray-700 transition"
+                                        className="text-[10px] md:text-xs font-bold px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-gray-700 transition"
                                     >
                                         Switch to {isIdrMode ? 'ETH' : 'IDR'}
                                     </button>
@@ -372,81 +372,82 @@ export default function AdminPage() {
                                     value={inputPrice} 
                                     onChange={e=>setInputPrice(e.target.value)} 
                                     placeholder={isIdrMode ? "e.g. 50000" : "e.g. 0.05"} 
-                                    className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition"
+                                    className="w-full p-2.5 md:p-3 text-sm bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition"
                                 />
-                                {/* Preview Konversi di bawah input */}
                                 {inputPrice && (
-                                    <p className="text-xs text-gray-500 font-semibold mt-1 bg-gray-100 p-1 rounded inline-block">
+                                    <p className="text-[10px] md:text-xs text-gray-500 font-semibold mt-1 bg-gray-100 p-1 rounded inline-block">
                                         {getPreviewConversion()}
                                     </p>
                                 )}
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-1">Update Quota</label>
-                                <input type="number" value={inputQuota} onChange={e=>setInputQuota(e.target.value)} placeholder="e.g. 500" className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition"/>
+                                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-1">Update Quota</label>
+                                <input type="number" value={inputQuota} onChange={e=>setInputQuota(e.target.value)} placeholder="e.g. 500" className="w-full p-2.5 md:p-3 text-sm bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition"/>
                             </div>
                         </div>
-                        <div className="flex gap-4 pt-2">
-                            <button onClick={updateConfig} disabled={loadingConfig} className="flex-1 bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">
+                        {/* FIX UI: flex-col untuk HP, sejajar untuk Laptop */}
+                        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2">
+                            <button onClick={updateConfig} disabled={loadingConfig} className="flex-1 w-full bg-gray-900 text-white py-2.5 md:py-3 rounded-xl text-sm md:text-base font-bold hover:bg-gray-800 transition shadow-lg">
                                 {loadingConfig ? "Saving..." : "Save Changes"}
                             </button>
-                            <button onClick={toggleStatus} className={`px-6 py-3 rounded-xl font-bold border transition ${isSaleActive ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-green-600 text-white border-green-600 hover:bg-green-700'}`}>
+                            <button onClick={toggleStatus} className={`w-full sm:w-auto px-4 md:px-6 py-2.5 md:py-3 rounded-xl text-sm md:text-base font-bold border transition ${isSaleActive ? 'bg-white text-red-600 border-red-200 hover:bg-red-50' : 'bg-green-600 text-white border-green-600 hover:bg-green-700'}`}>
                                 {isSaleActive ? "Close Market" : "Open Market"}
                             </button>
                         </div>
-                        {statusMsg && <p className="text-center text-sm font-medium text-blue-600 bg-blue-50 py-2 rounded-lg">{statusMsg}</p>}
+                        {statusMsg && <p className="text-center text-xs md:text-sm font-medium text-blue-600 bg-blue-50 py-2 rounded-lg">{statusMsg}</p>}
                     </div>
                 </div>
 
                 {/* 2. VERIFY TICKET */}
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Gate Verification</h2>
-                    <p className="text-sm text-gray-500 mb-6">Scan or input Visitor Ticket ID to verify validity on Blockchain.</p>
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-1 md:mb-2">Gate Verification</h2>
+                    <p className="text-xs md:text-sm text-gray-500 mb-4 md:mb-6">Scan or input Visitor Ticket ID to verify validity on Blockchain.</p>
                     
-                    <div className="flex gap-3 mb-6">
+                    {/* FIX UI: flex-col untuk form verifikasi di HP */}
+                    <div className="flex flex-col sm:flex-row gap-3 mb-6">
                         <input 
                             type="text" 
                             value={verifyId} 
                             onChange={e=>setVerifyId(e.target.value)} 
-                            placeholder="Enter Ticket ID (e.g. LPT-xxxx-0008)" 
-                            className="flex-1 p-4 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none font-mono text-center text-lg uppercase tracking-wider"
+                            placeholder="e.g. LPT-xxxx-0008" 
+                            className="flex-1 p-3 md:p-4 text-sm md:text-lg bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none font-mono text-center uppercase tracking-wider"
                         />
-                        <button onClick={checkTicket} className="px-8 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">
+                        <button onClick={checkTicket} className="w-full sm:w-auto px-8 py-3 sm:py-0 bg-gray-900 text-white rounded-xl text-sm md:text-base font-bold hover:bg-gray-800 transition shadow-lg">
                             VERIFY
                         </button>
                     </div>
 
                     {verifyResult && (
-                        <div className={`p-6 rounded-xl border-2 ${verifyResult.valid ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'} transition-all duration-300`}>
+                        <div className={`p-4 md:p-6 rounded-xl border-2 ${verifyResult.valid ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'} transition-all duration-300`}>
                             {verifyResult.valid ? (
-                                <div className="flex items-start gap-5">
-                                    <div className="bg-green-500 text-white p-3 rounded-full text-2xl">✓</div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-green-800">TICKET VALID</h3>
-                                        <p className="text-sm text-green-600 mb-3">ID: {verifyResult.scannedId}</p>
+                                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+                                    <div className="bg-green-500 text-white p-2 md:p-3 rounded-full text-xl md:text-2xl self-center sm:self-auto">✓</div>
+                                    <div className="flex-1 w-full">
+                                        <h3 className="text-lg md:text-xl font-bold text-green-800 text-center sm:text-left">TICKET VALID</h3>
+                                        <p className="text-xs md:text-sm text-green-600 mb-3 text-center sm:text-left">ID: {verifyResult.scannedId}</p>
                                         
-                                        <div className="grid grid-cols-2 gap-4 bg-white/60 p-4 rounded-lg border border-green-100">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 bg-white/60 p-3 md:p-4 rounded-lg border border-green-100">
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-bold">Visitor Name</p>
-                                                <p className="text-lg font-bold text-gray-900">{verifyResult.name}</p>
+                                                <p className="text-[10px] md:text-xs text-gray-500 uppercase font-bold">Visitor Name</p>
+                                                <p className="text-base md:text-lg font-bold text-gray-900">{verifyResult.name}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase font-bold">Visit Date</p>
-                                                <p className="text-lg font-bold text-gray-900">{verifyResult.date}</p>
+                                                <p className="text-[10px] md:text-xs text-gray-500 uppercase font-bold">Visit Date</p>
+                                                <p className="text-base md:text-lg font-bold text-gray-900">{verifyResult.date}</p>
                                             </div>
                                         </div>
                                         <div className="mt-3">
-                                            <p className="text-xs text-gray-500 uppercase font-bold">Owner Wallet</p>
-                                            <p className="text-xs font-mono text-gray-600 break-all">{verifyResult.owner}</p>
-                                            <p className="text-[10px] text-gray-400 italic mt-1">*Address verified on public blockchain.</p>
+                                            <p className="text-[10px] md:text-xs text-gray-500 uppercase font-bold">Owner Wallet</p>
+                                            <p className="text-[10px] md:text-xs font-mono text-gray-600 break-all">{verifyResult.owner}</p>
+                                            <p className="text-[8px] md:text-[10px] text-gray-400 italic mt-1">*Address verified on public blockchain.</p>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center text-center">
-                                    <div className="text-5xl mb-2">🚫</div>
-                                    <h3 className="text-xl font-bold text-red-700">INVALID TICKET</h3>
-                                    <p className="text-red-600">The ticket ID provided does not exist or is incorrect.</p>
+                                    <div className="text-4xl md:text-5xl mb-2">🚫</div>
+                                    <h3 className="text-lg md:text-xl font-bold text-red-700">INVALID TICKET</h3>
+                                    <p className="text-sm md:text-base text-red-600">The ticket ID provided does not exist or is incorrect.</p>
                                 </div>
                             )}
                         </div>
@@ -455,37 +456,37 @@ export default function AdminPage() {
             </div>
 
             {/* --- RIGHT COLUMN: FINANCE (4 Cols) --- */}
-            <div className="md:col-span-4 space-y-8">
+            <div className="lg:col-span-4 space-y-6 md:space-y-8">
                 
                 {/* FINANCIAL CARD */}
-                <div className="bg-white text-gray-900 p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
-                    <div className="absolute -top-4 -right-1 p-4 text-gray-100 text-9xl font-serif select-none pointer-events-none">ETH</div>
+                <div className="bg-white text-gray-900 p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                    <div className="absolute -top-4 -right-2 md:-right-1 p-4 text-gray-100 text-7xl md:text-9xl font-serif select-none pointer-events-none">ETH</div>
                     <div className="relative z-10">
-                        <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">Total Revenue</p>
-                        <h3 className="text-5xl font-bold text-green-500 mb-6">{contractBalance} <span className="text-lg text-green-500">ETH</span></h3>
+                        <p className="text-sm md:text-base font-bold text-gray-900 mb-1 flex items-center gap-2">Total Revenue</p>
+                        <h3 className="text-4xl md:text-5xl font-bold text-green-500 mb-6 truncate">{contractBalance} <span className="text-sm md:text-lg text-green-500">ETH</span></h3>
                         
-                        <button onClick={withdrawFunds} className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                        <button onClick={withdrawFunds} className="w-full py-2.5 md:py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-sm md:text-base">
                             <span>💸</span> Withdraw Funds
                         </button>
-                        <p className="text-xs text-gray-500 text-center mt-3">Funds will be transferred to Owner Wallet</p>
+                        <p className="text-[10px] md:text-xs text-gray-500 text-center mt-3">Funds will be transferred to Owner Wallet</p>
                     </div>
                 </div>
 
                 {/* OWNER INFO */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h3 className="text-sm md:text-base font-bold text-gray-900 mb-3 md:mb-4 flex items-center gap-2">
                         👤 Active Admin
                     </h3>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center text-xl">🛡️</div>
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm md:text-xl shrink-0">🛡️</div>
                         <div className="overflow-hidden">
-                            <p className="text-xs text-gray-500">Connected Wallet</p>
-                            <p className="text-sm font-bold font-mono text-gray-800 truncate w-40">{account}</p>
+                            <p className="text-[10px] md:text-xs text-gray-500">Connected Wallet</p>
+                            <p className="text-xs md:text-sm font-bold font-mono text-gray-800 truncate w-32 md:w-40">{account}</p>
                         </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-[10px] md:text-xs text-gray-400">
                         <span>Network Status</span>
-                        <span className="flex items-center gap-1 text-green-600 font-bold"><span className="w-2 h-2 bg-green-500 rounded-full"></span> Online (Sepolia)</span>
+                        <span className="flex items-center gap-1 text-green-600 font-bold"><span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full"></span> Online (Sepolia)</span>
                     </div>
                 </div>
 
