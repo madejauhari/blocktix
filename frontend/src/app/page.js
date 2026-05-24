@@ -199,8 +199,68 @@ export default function Home() {
     } catch (err) { console.error(err); }
   };
 
-  const connectWallet = async () => {
-    if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
+  // const connectWallet = async () => {
+  //   if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
+  //   try {
+  //       // --- BEST PRACTICE: Force Switch to Sepolia Network ---
+  //       const sepoliaChainId = '0xaa36a7'; 
+        
+  //       const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+  //       if (currentChainId !== sepoliaChainId) {
+  //           try {
+  //               await window.ethereum.request({
+  //                   method: 'wallet_switchEthereumChain',
+  //                   params: [{ chainId: sepoliaChainId }],
+  //               });
+  //           } catch (switchError) {
+  //               if (switchError.code === 4902) {
+  //                   await window.ethereum.request({
+  //                       method: 'wallet_addEthereumChain',
+  //                       params: [{
+  //                           chainId: sepoliaChainId,
+  //                           chainName: 'Sepolia test network',
+  //                           nativeCurrency: { name: 'SepoliaETH', symbol: 'SEP', decimals: 18 },
+  //                           rpcUrls: ['https://sepolia.infura.io/v3/'],
+  //                           blockExplorerUrls: ['https://sepolia.etherscan.io']
+  //                       }],
+  //                   });
+  //               } else {
+  //                   throw switchError;
+  //               }
+  //           }
+  //       }
+
+  //       const provider = new ethers.BrowserProvider(window.ethereum);
+  //       const signer = await provider.getSigner();
+  //       const address = await signer.getAddress();
+        
+  //       setAccount(address);
+  //       checkOwnership(address, provider);
+  //       fetchMarketStatus();
+  //   } catch (error) {
+  //       console.error("User rejected connection or switch network", error);
+  //   }
+  // };
+const connectWallet = async () => {
+    // 1. DETEKSI APAKAH BROWSER MEMILIKI METAMASK
+    if (!window.ethereum) {
+        // 2. DETEKSI APAKAH PENGUNJUNG MENGGUNAKAN HP
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // 3. JIKA PAKAI HP: Arahkan langsung (Deep Link) ke dalam aplikasi MetaMask
+            const confirmRedirect = confirm("Untuk transaksi Web3 di HP, Anda harus membuka website ini melalui Browser bawaan aplikasi MetaMask.\n\nBuka aplikasi MetaMask sekarang?");
+            if (confirmRedirect) {
+                // Tautan ajaib yang akan membuka aplikasi MetaMask dan langsung memuat website Anda
+                window.location.href = "https://metamask.app.link/dapp/blocktix-kappa.vercel.app";
+            }
+            return;
+        } else {
+            // 4. JIKA PAKAI LAPTOP: Beri tahu untuk install ekstensi
+            return alert("Metamask is not detected! Please install Metamask extension first.");
+        }
+    }
+
     try {
         // --- BEST PRACTICE: Force Switch to Sepolia Network ---
         const sepoliaChainId = '0xaa36a7'; 
@@ -241,7 +301,7 @@ export default function Home() {
         console.error("User rejected connection or switch network", error);
     }
   };
-
+  
   // --- FUNGSI LOGOUT ---
   const disconnectWallet = () => {
     setAccount(null);
