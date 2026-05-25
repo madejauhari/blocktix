@@ -340,19 +340,23 @@ const connectWallet = async () => {
     } catch (err) {
       console.error("Detail Error Transaksi:", err);
       
-      // [PERBAIKAN]: Membongkar seluruh objek error untuk mencari kata kunci secara mendalam
       const errorString = (err.message + " " + JSON.stringify(err)).toLowerCase();
       
-      // 1. Deteksi Error Saldo Kurang
+      // 1. Deteksi Error Saldo Kurang (Eksplisit)
       if (err.code === "INSUFFICIENT_FUNDS" || errorString.includes("insufficient funds")) {
           alert("⚠️ TRANSACTION REJECTED: Insufficient Sepolia ETH Balance.\n\nIf you believe your balance is sufficient, this happens because your wallet is not synced.\n\nSOLUTION: Please open your MetaMask settings, go to Advanced, find 'Clear activity tab data' (Reset Account), and try again.");
-          setStatus("Failed: Insufficient ETH balance for transaction fee.");
+          setStatus("Failed: Insufficient ETH balance.");
       } 
-      // 2. Deteksi Error User Menolak Transaksi
+      // 2. Deteksi User Menolak Transaksi
       else if (err.code === "ACTION_REJECTED" || errorString.includes("rejected")) {
           setStatus("Failed: Transaction cancelled by user.");
       } 
-      // 3. Error lainnya yang tidak terduga
+      // 3. [BARU] Deteksi Missing Revert Data / EstimateGas Exception
+      else if (errorString.includes("missing revert data") || err.code === "CALL_EXCEPTION") {
+          alert("⚠️ TRANSACTION BLOCKED BY BLOCKCHAIN.\n\nThis usually happens due to one of these reasons:\n1. Your wallet has exactly 0 Sepolia ETH (cannot simulate gas fee).\n2. The Ticket Market is currently CLOSED by the Administrator.\n3. The tickets are sold out.\n\nPlease check your balance or use 'Pay with Rupiah' instead.");
+          setStatus("Failed: Blocked by Smart Contract (EstimateGas Exception).");
+      }
+      // 4. Error lainnya
       else {
           setStatus("Failed: " + (err.reason || err.shortMessage || "Transaction failed to process."));
       }
