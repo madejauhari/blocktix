@@ -338,16 +338,23 @@ const connectWallet = async () => {
       checkOwnership(account, provider); 
       fetchMarketStatus(); 
     } catch (err) {
-      console.error(err);
+      console.error("Detail Error Transaksi:", err);
       
-      // Deteksi khusus untuk error saldo kurang
-      const errorStr = err.message ? err.message.toLowerCase() : "";
-      if (err.code === "INSUFFICIENT_FUNDS" || errorStr.includes("insufficient funds")) {
-          alert("⚠️ TRANSAKSI DITOLAK: Saldo Sepolia ETH Tidak Mencukupi.\n\nJika Anda yakin saldo terisi, hal ini terjadi karena dompet belum tersinkronisasi.\n\nSOLUSI: Silakan klik icon roda gigi/titik tiga pada MetaMask Anda, lakukan 'Clear Activity' / 'Reset Account', lalu coba reconnect kembali.");
-          setStatus("Failed: Saldo ETH tidak mencukupi untuk biaya transaksi.");
-      } else {
-          // Tangkap error lainnya secara rapi
-          setStatus("Failed: " + (err.reason || "Transaksi dibatalkan atau gagal diproses."));
+      // [PERBAIKAN]: Membongkar seluruh objek error untuk mencari kata kunci secara mendalam
+      const errorString = (err.message + " " + JSON.stringify(err)).toLowerCase();
+      
+      // 1. Deteksi Error Saldo Kurang
+      if (err.code === "INSUFFICIENT_FUNDS" || errorString.includes("insufficient funds")) {
+          alert("⚠️ TRANSACTION REJECTED: Insufficient Sepolia ETH Balance.\n\nIf you believe your balance is sufficient, this happens because your wallet is not synced.\n\nSOLUTION: Please open your MetaMask settings, go to Advanced, find 'Clear activity tab data' (Reset Account), and try again.");
+          setStatus("Failed: Insufficient ETH balance for transaction fee.");
+      } 
+      // 2. Deteksi Error User Menolak Transaksi
+      else if (err.code === "ACTION_REJECTED" || errorString.includes("rejected")) {
+          setStatus("Failed: Transaction cancelled by user.");
+      } 
+      // 3. Error lainnya yang tidak terduga
+      else {
+          setStatus("Failed: " + (err.reason || err.shortMessage || "Transaction failed to process."));
       }
     }
     setLoading(false);
