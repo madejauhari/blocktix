@@ -519,7 +519,7 @@ const connectWallet = async () => {
                     onClick={scrollToBooking}
                     className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2"
                 >
-                    Buy Tickets <span className="text-xl">→</span>
+                    Buy Ticketsp <span className="text-xl">→</span>
                 </button>
             </div>
         </div>
