@@ -486,7 +486,7 @@ const connectWallet = async () => {
 
         <div className="relative z-10 text-white max-w-4xl space-y-6 mt-10">
             <p className="text-base md:text-xl font-medium tracking-widest uppercase text-green-300">
-                Decentralized E-Ticketing test
+                Decentralized E-Ticketing
             </p>
             <h1 className="text-4xl md:text-7xl font-bold font-serif leading-tight">
                 Secure & Transparent <br/> Travel Experience
@@ -503,25 +503,25 @@ const connectWallet = async () => {
                     Buy Tickets <span className="text-xl">→</span>
                 </button>
             </div>
-            // <div className="pt-8 flex flex-col items-center gap-4">
-            //     {/* --- TOMBOL PANDUAN PDF --- */}
-            //     <a 
-            //       href="/panduan-blocktix.pdf" 
-            //       target="_blank" 
-            //       rel="noopener noreferrer"
-            //       className="px-6 py-2 border-2 border-white text-white rounded-full font-bold hover:bg-white/20 transition flex items-center justify-center gap-2"
-            //     >
-            //       📖 Read User Guide (PDF)
-            //     </a>
+            <div className="pt-8 flex flex-col items-center gap-4">
+                {/* --- TOMBOL PANDUAN PDF --- */}
+                <a 
+                  href="/panduan-blocktix.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="px-6 py-2 border-2 border-white text-white rounded-full font-bold hover:bg-white/20 transition flex items-center justify-center gap-2"
+                >
+                  📖 Read User Guide (PDF)
+                </a>
 
-            //     {/* --- TOMBOL BUY TICKETS --- */}
-            //     <button 
-            //         onClick={scrollToBooking}
-            //         className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2"
-            //     >
-            //         Buy Tickets <span className="text-xl">→</span>
-            //     </button>
-            // </div>
+                {/* --- TOMBOL BUY TICKETS --- */}
+                <button 
+                    onClick={scrollToBooking}
+                    className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2"
+                >
+                    Buy Tickets <span className="text-xl">→</span>
+                </button>
+            </div>
         </div>
       </header>
 
