@@ -495,33 +495,33 @@ const connectWallet = async () => {
                 Prototype Demonstration using Case Study: <strong>Lembu Putih, Gianyar</strong>.
                 Powered by Ethereum Smart Contract & NFT Standard.
             </p>
-            // <div className="pt-8">
+            <div className="pt-8">
+                <button 
+                    onClick={scrollToBooking}
+                    className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
+                >
+                    Buy Ticketszzz <span className="text-xl">→</span>
+                </button>
+            </div>
+            // <div className="pt-8 flex flex-col items-center gap-4">
+            //     {/* --- TOMBOL PANDUAN PDF --- */}
+            //     <a 
+            //       href="/panduan-blocktix.pdf" 
+            //       target="_blank" 
+            //       rel="noopener noreferrer"
+            //       className="px-6 py-2 border-2 border-white text-white rounded-full font-bold hover:bg-white/20 transition flex items-center justify-center gap-2"
+            //     >
+            //       📖 Read User Guide (PDF)
+            //     </a>
+
+            //     {/* --- TOMBOL BUY TICKETS --- */}
             //     <button 
             //         onClick={scrollToBooking}
-            //         className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
+            //         className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2"
             //     >
             //         Buy Tickets <span className="text-xl">→</span>
             //     </button>
             // </div>
-            <div className="pt-8 flex flex-col items-center gap-4">
-                {/* --- TOMBOL PANDUAN PDF --- */}
-                <a 
-                  href="/panduan-blocktix.pdf" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="px-6 py-2 border-2 border-white text-white rounded-full font-bold hover:bg-white/20 transition flex items-center justify-center gap-2"
-                >
-                  📖 Read User Guide (PDF)
-                </a>
-
-                {/* --- TOMBOL BUY TICKETS --- */}
-                <button 
-                    onClick={scrollToBooking}
-                    className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2"
-                >
-                    Buy Ticketsp <span className="text-xl">→</span>
-                </button>
-            </div>
         </div>
       </header>
 
