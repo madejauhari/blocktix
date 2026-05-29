@@ -579,7 +579,7 @@ const connectWallet = async () => {
                                             <p className="font-semibold text-gray-500">Owner Address:</p>
                                             <p className="font-mono text-gray-700 break-all">{account}</p>
                                             <p className="text-[10px] text-gray-400 italic mt-1 leading-tight">
-                                                *Public Address ditampilkan sebagai bukti transparansi kepemilikan aset (NFT).
+                                                *Public Address is displayed as proof of asset ownership transparency (NFT).
                                             </p>
                                         </div>
                                     </div>
