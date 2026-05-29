@@ -503,7 +503,7 @@ const connectWallet = async () => {
                   rel="noopener noreferrer"
                   className="px-6 py-2 border-2 border-white text-white rounded-full font-bold hover:bg-white/20 transition flex items-center justify-center gap-2"
                 >
-                  📖 Read User Guide (PDF)
+                  🗐 Read User Guide (PDF)
                 </a>
 
                 {/* --- TOMBOL BUY TICKETS --- */}
