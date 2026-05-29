@@ -495,14 +495,6 @@ const connectWallet = async () => {
                 Prototype Demonstration using Case Study: <strong>Lembu Putih, Gianyar</strong>.
                 Powered by Ethereum Smart Contract & NFT Standard.
             </p>
-            // <div className="pt-8">
-            //     <button 
-            //         onClick={scrollToBooking}
-            //         className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
-            //     >
-            //         Buy Tickets <span className="text-xl">→</span>
-            //     </button>
-            // </div>
             <div className="pt-8 flex flex-col items-center gap-4">
                 {/* --- TOMBOL PANDUAN PDF --- */}
                 <a 
