@@ -486,7 +486,7 @@ const connectWallet = async () => {
 
         <div className="relative z-10 text-white max-w-4xl space-y-6 mt-10">
             <p className="text-base md:text-xl font-medium tracking-widest uppercase text-green-300">
-                Decentralized E-Ticketing
+                Decentralized E-Ticketing test
             </p>
             <h1 className="text-4xl md:text-7xl font-bold font-serif leading-tight">
                 Secure & Transparent <br/> Travel Experience
@@ -500,7 +500,7 @@ const connectWallet = async () => {
                     onClick={scrollToBooking}
                     className="px-6 py-3 md:px-8 md:py-4 bg-green-500 hover:bg-green-600 text-white text-base md:text-lg font-bold rounded-full transition transform hover:scale-105 shadow-xl flex items-center gap-2 mx-auto"
                 >
-                    Buy Ticketszzz <span className="text-xl">→</span>
+                    Buy Tickets <span className="text-xl">→</span>
                 </button>
             </div>
             // <div className="pt-8 flex flex-col items-center gap-4">
