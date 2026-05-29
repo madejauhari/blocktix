@@ -249,7 +249,7 @@ const connectWallet = async () => {
         
         if (isMobile) {
             // 3. JIKA PAKAI HP: Arahkan langsung (Deep Link) ke dalam aplikasi MetaMask
-            const confirmRedirect = confirm("Untuk transaksi Web3 di HP, Anda harus membuka website ini melalui Browser bawaan aplikasi MetaMask.\n\nBuka aplikasi MetaMask sekarang?");
+            const confirmRedirect = confirm("To perform Web3 transactions on your phone, you must open this website using the MetaMask app’s built-in browser.\n\nOpen the MetaMask app now?");
             if (confirmRedirect) {
                 // Tautan ajaib yang akan membuka aplikasi MetaMask dan langsung memuat website Anda
                 window.location.href = "https://metamask.app.link/dapp/blocktix-kappa.vercel.app";
