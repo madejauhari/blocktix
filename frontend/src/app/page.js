@@ -6,7 +6,8 @@ import Link from 'next/link';
 import LembuPutihTicket from '@/utils/LembuPutihTicket.json';
 
 // --- KONFIGURASI ---
-const CONTRACT_ADDRESS = "0x7495cAD923061e57481e764E70F80B9F3Ff2BFe0"; 
+// PASTIKAN CONTRACT ADDRESS INI SUDAH DIGANTI DENGAN ADDRESS BARU HASIL DEPLOY
+const CONTRACT_ADDRESS = "0xCc6e1AD952f2a9C699DB1c00F7cA981A92cEe903"; 
 
 export default function Home() {
   // --- STATE LOGIC ---
@@ -22,9 +23,13 @@ export default function Home() {
   // Market State
   const [dynamicPrice, setDynamicPrice] = useState("0");
   const [isSaleOn, setIsSaleOn] = useState(false);
-  const [soldOut, setSoldOut] = useState(false);
+  const [soldOut, setSoldOut] = useState(false); // Untuk Total Keseluruhan
   const [maxSupply, setMaxSupply] = useState(0);
   const [totalMinted, setTotalMinted] = useState(0);
+
+  // --- STATE KUOTA HARIAN ---
+  const [remainingDailyQuota, setRemainingDailyQuota] = useState(null);
+  const [isDateSoldOut, setIsDateSoldOut] = useState(false);
 
   // Form State
   const [buyQuantity, setBuyQuantity] = useState(1);
@@ -149,6 +154,37 @@ export default function Home() {
     };
   }, []);
 
+  // --- PENGECEKAN KUOTA HARIAN REALTIME ---
+  useEffect(() => {
+    async function checkDailyQuota() {
+      if (!visitDate || dateError) {
+        setIsDateSoldOut(false);
+        setRemainingDailyQuota(null);
+        return;
+      }
+
+      try {
+        // Menggunakan public provider agar tidak perlu connect wallet untuk melihat kuota
+        const publicProvider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, LembuPutihTicket.abi, publicProvider);
+        
+        const remaining = await contract.getRemainingDailyQuota(visitDate);
+        const quotaNumber = Number(remaining);
+
+        setRemainingDailyQuota(quotaNumber);
+        if (quotaNumber === 0) {
+            setIsDateSoldOut(true);
+        } else {
+            setIsDateSoldOut(false);
+        }
+      } catch (error) {
+        console.error("Gagal mengecek kuota harian:", error);
+      }
+    }
+
+    checkDailyQuota();
+  }, [visitDate, dateError]);
+
   // --- MEMBACA DATA DARI PUBLIC RPC ---
   const fetchMarketStatus = async () => {
     try {
@@ -199,49 +235,7 @@ export default function Home() {
     } catch (err) { console.error(err); }
   };
 
-  // const connectWallet = async () => {
-  //   if (!window.ethereum) return alert("Metamask is not detected! Please install Metamask extension first.");
-  //   try {
-  //       // --- BEST PRACTICE: Force Switch to Sepolia Network ---
-  //       const sepoliaChainId = '0xaa36a7'; 
-        
-  //       const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-  //       if (currentChainId !== sepoliaChainId) {
-  //           try {
-  //               await window.ethereum.request({
-  //                   method: 'wallet_switchEthereumChain',
-  //                   params: [{ chainId: sepoliaChainId }],
-  //               });
-  //           } catch (switchError) {
-  //               if (switchError.code === 4902) {
-  //                   await window.ethereum.request({
-  //                       method: 'wallet_addEthereumChain',
-  //                       params: [{
-  //                           chainId: sepoliaChainId,
-  //                           chainName: 'Sepolia test network',
-  //                           nativeCurrency: { name: 'SepoliaETH', symbol: 'SEP', decimals: 18 },
-  //                           rpcUrls: ['https://sepolia.infura.io/v3/'],
-  //                           blockExplorerUrls: ['https://sepolia.etherscan.io']
-  //                       }],
-  //                   });
-  //               } else {
-  //                   throw switchError;
-  //               }
-  //           }
-  //       }
-
-  //       const provider = new ethers.BrowserProvider(window.ethereum);
-  //       const signer = await provider.getSigner();
-  //       const address = await signer.getAddress();
-        
-  //       setAccount(address);
-  //       checkOwnership(address, provider);
-  //       fetchMarketStatus();
-  //   } catch (error) {
-  //       console.error("User rejected connection or switch network", error);
-  //   }
-  // };
-const connectWallet = async () => {
+  const connectWallet = async () => {
     // 1. DETEKSI APAKAH BROWSER MEMILIKI METAMASK
     if (!window.ethereum) {
         // 2. DETEKSI APAKAH PENGUNJUNG MENGGUNAKAN HP
@@ -317,6 +311,8 @@ const connectWallet = async () => {
     if (!account) return alert("Please connect wallet first!");
     if (!visitorName || !visitDate) return alert("Please fill in Name and Visit Date!");
     if (visitDate < getTodayDate()) return alert("Invalid Date!");
+    // Validasi kuota di sisi UI sebelum kirim ke blockchain
+    if (remainingDailyQuota !== null && buyQuantity > remainingDailyQuota) return alert(`Jumlah tiket yang dibeli melebihi sisa kuota hari ini (${remainingDailyQuota} tiket).`);
 
     setLoading(true);
     setStatus("Processing transaction...");
@@ -337,26 +333,24 @@ const connectWallet = async () => {
       alert("Purchase Successful!");
       checkOwnership(account, provider); 
       fetchMarketStatus(); 
+      // Force update quota
+      setVisitDate(visitDate); 
     } catch (err) {
       console.error("Detail Error Transaksi:", err);
       
       const errorString = (err.message + " " + JSON.stringify(err)).toLowerCase();
       
-      // 1. Deteksi Error Saldo Kurang (Eksplisit)
       if (err.code === "INSUFFICIENT_FUNDS" || errorString.includes("insufficient funds")) {
           alert("⚠️ TRANSACTION REJECTED: Insufficient Sepolia ETH Balance.\n\nIf you believe your balance is sufficient, this happens because your wallet is not synced.\n\nSOLUTION: Please open your MetaMask settings, go to Advanced, find 'Clear activity tab data' (Reset Account), and try again.");
           setStatus("Failed: Insufficient ETH balance.");
       } 
-      // 2. Deteksi User Menolak Transaksi
       else if (err.code === "ACTION_REJECTED" || errorString.includes("rejected")) {
           setStatus("Failed: Transaction cancelled by user.");
       } 
-      // 3. [BARU] Deteksi Missing Revert Data / EstimateGas Exception
       else if (errorString.includes("missing revert data") || err.code === "CALL_EXCEPTION") {
           alert("⚠️ TRANSACTION BLOCKED BY BLOCKCHAIN.\n\nThis usually happens due to one of these reasons:\n1. Your wallet has exactly 0 Sepolia ETH (cannot simulate gas fee).\n2. The Ticket Market is currently CLOSED by the Administrator.\n3. The tickets are sold out.\n\nPlease check your balance or use 'Pay with Rupiah' instead.");
           setStatus("Failed: Blocked by Smart Contract (EstimateGas Exception).");
       }
-      // 4. Error lainnya
       else {
           setStatus("Failed: " + (err.reason || err.shortMessage || "Transaction failed to process."));
       }
@@ -370,6 +364,7 @@ const connectWallet = async () => {
     if (!visitorName || !visitDate) return alert("Please fill in Name and Visit Date!");
     if (visitDate < getTodayDate()) return alert("Invalid Date!");
     if (!ethRateIDR) return alert("System is loading exchange rates, please try again in a few seconds.");
+    if (remainingDailyQuota !== null && buyQuantity > remainingDailyQuota) return alert(`Jumlah tiket yang dibeli melebihi sisa kuota hari ini (${remainingDailyQuota} tiket).`);
 
     setLoading(true);
     setStatus("Requesting payment token from Midtrans...");
@@ -561,7 +556,7 @@ const connectWallet = async () => {
                 {/* Left: Status & Ticket List */}
                 <div className="space-y-6">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                        <p className="text-xs text-gray-400 uppercase font-bold mb-2">Tickets Available</p>
+                        <p className="text-xs text-gray-400 uppercase font-bold mb-2">Tickets Available (Total)</p>
                         <div className="flex items-end gap-2 mb-2">
                             <span className="text-5xl font-bold text-green-600">{maxSupply - totalMinted}</span>
                             <span className="text-xl text-gray-400 font-medium mb-2">/ {maxSupply} Available</span>
@@ -652,9 +647,18 @@ const connectWallet = async () => {
                                             setDateError("");
                                         }
                                     }} 
-                                    className={`w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 outline-none ${dateError ? 'border-red-500' : 'border-gray-200'}`}
+                                    className={`w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 outline-none ${dateError || isDateSoldOut ? 'border-red-500' : 'border-gray-200'}`}
                                 />
                                 {dateError && <p className="text-red-500 text-xs mt-2">{dateError}</p>}
+                                
+                                {/* --- INDIKATOR KUOTA HARIAN --- */}
+                                {visitDate && !dateError && remainingDailyQuota !== null && (
+                                    <p className={`text-xs mt-2 font-bold ${isDateSoldOut ? 'text-red-500' : 'text-green-600'}`}>
+                                        {isDateSoldOut 
+                                            ? "⚠️ Sorry, tickets for this date are sold out." 
+                                            : `✅ Remaining quota for this date: ${remainingDailyQuota} tickets`}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200">
@@ -690,10 +694,11 @@ const connectWallet = async () => {
                                 </div>
                                 
                                 {/* --- DUAL PAYMENT BUTTONS --- */}
+                                {/* Update: Ditambahkan variabel isDateSoldOut agar tombol mati saat kuota harian habis */}
                                 <div className="flex gap-2 md:gap-3">
                                     <button 
                                         onClick={buyTicket} 
-                                        disabled={loading || soldOut || !isSaleOn || !!dateError} 
+                                        disabled={loading || soldOut || !isSaleOn || !!dateError || isDateSoldOut} 
                                         className="w-1/2 py-2 md:py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
                                     >
                                         <span className="text-sm md:text-base">Pay with ETH</span>
@@ -701,7 +706,7 @@ const connectWallet = async () => {
                                     </button>
                                     <button 
                                         onClick={buyWithRupiah} 
-                                        disabled={loading || soldOut || !isSaleOn || !!dateError || !ethRateIDR} 
+                                        disabled={loading || soldOut || !isSaleOn || !!dateError || !ethRateIDR || isDateSoldOut} 
                                         className="w-1/2 py-2 md:py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex flex-col items-center justify-center gap-1"
                                     >
                                         <span className="text-sm md:text-base">Pay with Rupiah</span>

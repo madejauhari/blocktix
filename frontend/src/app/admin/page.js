@@ -5,7 +5,7 @@ import Link from 'next/link';
 import LembuPutihTicket from '@/utils/LembuPutihTicket.json';
 
 // --- KONFIGURASI ---
-const CONTRACT_ADDRESS = "0x7495cAD923061e57481e764E70F80B9F3Ff2BFe0"; 
+const CONTRACT_ADDRESS = "0xCc6e1AD952f2a9C699DB1c00F7cA981A92cEe903"; 
 
 export default function AdminPage() {
   const [account, setAccount] = useState("");
